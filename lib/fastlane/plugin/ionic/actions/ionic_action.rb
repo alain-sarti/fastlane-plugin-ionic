@@ -83,6 +83,9 @@ module Fastlane
         args << '--device' if params[:device]
         args << '--prod' if params[:prod]
         args << '--browserify' if params[:browserify]
+        args << '--minifyjs' if params[:minifyjs]
+        args << '--minifycss' if params[:minifycss]
+        args << '--optimizejs' if params[:optimizejs]
         android_args = self.get_android_args(params) if params[:platform].to_s == 'android'
         ios_args = self.get_ios_args(params) if params[:platform].to_s == 'ios'
 
@@ -104,9 +107,9 @@ module Fastlane
         end
 
         if params[:platform].to_s == 'ios'
-          sh "ionic cordova compile #{params[:platform]} #{args.join(' ')} -- #{ios_args}" 
+          sh "ionic cordova compile #{params[:platform]} #{args.join(' ')} -- #{ios_args}"
         elsif params[:platform].to_s == 'android'
-          sh "ionic cordova compile #{params[:platform]} #{args.join(' ')} -- -- #{android_args}" 
+          sh "ionic cordova compile #{params[:platform]} #{args.join(' ')} -- -- #{android_args}"
         end
       end
 
@@ -179,6 +182,36 @@ module Fastlane
             default_value: false,
             verify_block: proc do |value|
               UI.user_error!("Prod should be boolean") unless [false, true].include? value
+            end
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :minifyjs,
+            env_name: "CORDOVA_MINIFYJS",
+            description: "Minify the output Javascript",
+            is_string: false,
+            default_value: true,
+            verify_block: proc do |value|
+              UI.user_error!("Minifyjs should be boolean") unless [false, true].include? value
+            end
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :minifycss,
+            env_name: "CORDOVA_MINIFYCSS",
+            description: "Minify the output CSS",
+            is_string: false,
+            default_value: true,
+            verify_block: proc do |value|
+              UI.user_error!("Minifycss should be boolean") unless [false, true].include? value
+            end
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :optimizejs,
+            env_name: "CORDOVA_OPTIMISEJS",
+            description: "Optimies the output Javascript",
+            is_string: false,
+            default_value: true,
+            verify_block: proc do |value|
+              UI.user_error!("Optimisejs should be boolean") unless [false, true].include? value
             end
           ),
           FastlaneCore::ConfigItem.new(
